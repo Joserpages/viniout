@@ -4,9 +4,8 @@ import { Flame, Vote, Trophy } from "lucide-react";
 import "./App.css";
 import vini from "./assets/vini.png";
 
-const API_URL = "http://localhost:3001";
-
-const BASE_FAKE_SIGNATURES = 0;
+const API_URL = "";
+const BASE_FAKE_SIGNATURES = 10386;
 const GOAL = 100000;
 
 function App() {
@@ -23,18 +22,17 @@ function App() {
     fetchVotes();
 
     const signed = localStorage.getItem("vinicius_signed");
+    if (signed === "1") setHasSigned(true);
 
-    if (signed === "1") {
-      setHasSigned(true);
-    }
-
-    try {
-      if (window.adsbygoogle) {
-        window.adsbygoogle.push({});
+    setTimeout(() => {
+      try {
+        if (window.adsbygoogle) {
+          window.adsbygoogle.push({});
+        }
+      } catch (e) {
+        console.log("AdSense todavía no cargó:", e);
       }
-    } catch (e) {
-      console.log(e);
-    }
+    }, 800);
   }, []);
 
   async function fetchVotes() {
@@ -46,10 +44,10 @@ function App() {
       }
 
       const data = await res.json();
-
       setVotes(BASE_FAKE_SIGNATURES + Number(data.total || 0));
     } catch (err) {
       console.error("Error cargando firmas:", err);
+      setVotes(BASE_FAKE_SIGNATURES);
     } finally {
       setLoading(false);
     }
@@ -75,16 +73,11 @@ function App() {
       const data = await res.json();
 
       setVotes(BASE_FAKE_SIGNATURES + Number(data.total || 0));
-
       setHasSigned(true);
-
       localStorage.setItem("vinicius_signed", "1");
     } catch (err) {
       console.error("Error firmando:", err);
-
-      alert(
-        "No se pudo guardar la firma. Revisa que el servidor esté encendido."
-      );
+      alert("No se pudo guardar la firma. Revisa que el servidor esté encendido.");
     } finally {
       setSigning(false);
     }
@@ -134,7 +127,6 @@ function App() {
           comparte el movimiento.
         </p>
 
-        {/* ADSENSE */}
         <div className="adsense-container">
           <ins
             className="adsbygoogle"
@@ -144,6 +136,10 @@ function App() {
             data-ad-format="auto"
             data-full-width-responsive="true"
           ></ins>
+
+          <div className="ad-fallback">
+            ESPACIO PUBLICITARIO
+          </div>
         </div>
 
         <motion.div
@@ -155,15 +151,12 @@ function App() {
           <div className="vote-header">
             <div>
               <h2>{loading ? "..." : votes.toLocaleString("es-GT")}</h2>
-
               <p>Madridistas firmaron</p>
             </div>
 
             <div className="goal-box">
               <Trophy size={30} />
-
               <strong>{GOAL.toLocaleString("es-GT")}</strong>
-
               <span>Meta</span>
             </div>
           </div>
@@ -180,12 +173,7 @@ function App() {
             disabled={hasSigned || signing}
           >
             <Vote size={22} />
-
-            {signing
-              ? "Guardando..."
-              : hasSigned
-              ? "Ya firmaste"
-              : "Firmar petición"}
+            {signing ? "Guardando..." : hasSigned ? "Ya firmaste" : "Firmar petición"}
           </button>
 
           <p className="small-note">
