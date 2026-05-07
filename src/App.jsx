@@ -5,7 +5,7 @@ import "./App.css";
 import vini from "./assets/vini.png";
 
 const API_URL = "";
-const BASE_FAKE_SIGNATURES = 10386;
+const BASE_FAKE_SIGNATURES = 12345;
 const GOAL = 100000;
 
 function App() {
@@ -147,10 +147,6 @@ function App() {
             data-ad-format="auto"
             data-full-width-responsive="true"
           ></ins>
-
-          <div className="ad-fallback">
-            ESPACIO PUBLICITARIO
-          </div>
         </div>
 
         <motion.div
